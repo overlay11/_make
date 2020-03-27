@@ -174,3 +174,19 @@ SOFFICE_FLAGS = --headless
 	$(SOFFICE) $(SOFFICE_FLAGS) $(SOFFICE_PDF_FLAGS) --convert-to pdf $<
 
 odt-from-doc: $(patsubst %.doc,%.odt,$(wildcard *.doc))
+
+
+POTRACE = potrace -s
+
+%.svg: %.pbm
+	$(POTRACE) $(POTRACE_FLAGS) -o $@ $<
+
+
+TESSERACT = tesseract
+TESSERACT_FLAGS = -l rus+eng
+
+%.txt: %.png
+	$(TESSERACT) $< $(basename $@) $(TESSERACT_FLAGS)
+
+%.txt: %.jpg
+	$(TESSERACT) $< $(basename $@) $(TESSERACT_FLAGS)
