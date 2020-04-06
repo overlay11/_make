@@ -190,3 +190,10 @@ TESSERACT_FLAGS = -l rus+eng
 
 %.txt: %.jpg
 	$(TESSERACT) $< $(basename $@) $(TESSERACT_FLAGS)
+
+
+PDFBOOK = pdfbook
+PDFBOOK_FLAGS = --short-edge --suffix booklet
+
+%-booklet.pdf: %.pdf
+	$(PDFBOOK) $(PDFBOOK_FLAGS) $<
