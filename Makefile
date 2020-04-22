@@ -1,19 +1,20 @@
-.PHONY: pdf-from-md jpg-from-png mp3-from-wav aac-from-wav ogg-from-wav \
-opus-from-wav png-from-scad svg-from-scad multiviews png-from-svg odt-from-doc \
-mp3-from-flac aac-from-flac ogg-from-flac opus-from-flac
+fontsize = 12pt
+lang = ru
+dpi = 96
+
+SHELL = /bin/sh
 
 
 PANDOC = pandoc
 
-PANDOC_PDF_STYLE = lang=ru \
-classoption=twoside \
+PANDOC_PDF_STYLE = lang=$(lang) \
 documentclass=extarticle \
-margin-left=25mm \
+margin-left=15mm \
 margin-right=15mm \
 margin-top=15mm \
 margin-bottom=20mm \
 papersize=a4 \
-fontsize=12pt \
+fontsize=$(fontsize) \
 mainfont='STIX_Two_Text' \
 sansfont='PT_Sans' \
 monofont='PT_Mono' \
@@ -27,9 +28,11 @@ $(subst _, ,$(addprefix -M ,$(PANDOC_PDF_STYLE)))
 
 pdf-from-md: $(patsubst %.md,%.pdf,$(wildcard *.md))
 
+.PHONY: pdf-from-md
+
 
 MAGICK = magick
-MAGICK_JPG_FLAGS = -strip -density 72 -units PixelsPerInch \
+MAGICK_JPG_FLAGS = -strip -density $(dpi) -units PixelsPerInch \
 -quality 95 -interlace JPEG
 MAGICK_PNG_FLAGS = -interlace PNG
 
@@ -43,6 +46,8 @@ $(wordlist 5,6,$(1)) -gravity center +append
 	$(MAGICK) $(call multiview-layout,$^) $(MAGICK_PNG_FLAGS) $@
 
 jpg-from-png: $(patsubst %.png,%.jpg,$(wildcard *.png))
+
+.PHONY: jpg-from-png
 
 
 FLAC = flac
@@ -60,6 +65,8 @@ LAME_FLAGS = --nohist --preset extreme
 mp3-from-wav: $(patsubst %.wav,%.mp3,$(wildcard *.wav))
 mp3-from-flac: $(patsubst %.flac,%.mp3,$(wildcard *.flac))
 
+.PHONY: mp3-from-wav mp3-from-flac
+
 
 FDKAAC = fdkaac
 FDKAAC_FLAGS = -m 5
@@ -69,6 +76,8 @@ FDKAAC_FLAGS = -m 5
 
 aac-from-wav: $(patsubst %.wav,%.m4a,$(wildcard *.wav))
 aac-from-flac: $(patsubst %.flac,%.m4a,$(wildcard *.flac))
+
+.PHONY: aac-from-wav aac-from-flac
 
 
 OGGENC = oggenc
@@ -80,6 +89,8 @@ OGGENC_FLAGS = -q 8
 ogg-from-wav: $(patsubst %.wav,%.ogg,$(wildcard *.wav))
 ogg-from-flac: $(patsubst %.flac,%.ogg,$(wildcard *.flac))
 
+.PHONY: ogg-from-wav ogg-from-flac
+
 
 OPUSENC = opusenc
 OPUSENC_FLAGS = --bitrate 256
@@ -89,6 +100,8 @@ OPUSENC_FLAGS = --bitrate 256
 
 opus-from-wav: $(patsubst %.wav,%.opus,$(wildcard *.wav))
 opus-from-flac: $(patsubst %.flac,%.opus,$(wildcard *.flac))
+
+.PHONY: opus-from-wav opus-from-flac
 
 
 M4 = m4
@@ -151,14 +164,18 @@ png-from-scad: $(patsubst %.scad,%.png,$(wildcard *.scad))
 svg-from-scad: $(patsubst %.scad,%.svg,$(wildcard *.scad))
 multiviews: $(patsubst %.scad,%-multiview.png,$(wildcard *.scad))
 
+.PHONY: png-from-scad svg-from-scad multiviews
+
 
 INKSCAPE = inkscape
-INKSCAPE_FLAGS = -z -d 300
+INKSCAPE_FLAGS = -z -d $(dpi)
 
 %.png: %.svg
 	$(INKSCAPE) $(INKSCAPE_FLAGS) $(INKSCAPE_PNG_FLAGS) -e '$(abspath $@)' '$(abspath $<)'
 
 png-from-svg: $(patsubst %.svg,%.png,$(wildcard *.svg))
+
+.PHONY: png-from-svg
 
 
 SOFFICE = soffice
@@ -174,6 +191,8 @@ SOFFICE_FLAGS = --headless
 	$(SOFFICE) $(SOFFICE_FLAGS) $(SOFFICE_PDF_FLAGS) --convert-to pdf $<
 
 odt-from-doc: $(patsubst %.doc,%.odt,$(wildcard *.doc))
+
+.PHONY: odt-from-doc
 
 
 POTRACE = potrace -s
