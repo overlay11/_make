@@ -31,6 +31,16 @@ pdf-from-md: $(patsubst %.md,%.pdf,$(wildcard *.md))
 .PHONY: pdf-from-md
 
 
+SHDOC = ~/bin/shdoc
+
+%.md: %.sh
+	$(SHDOC) $(SHDOC_FLAGS) $< > $@
+
+pdf-from-sh: $(patsubst %.sh,%.pdf,$(wildcard *.sh))
+
+.PHONY: pdf-from-sh
+
+
 MAGICK = magick
 MAGICK_JPG_FLAGS = -strip -density $(dpi) -units PixelsPerInch \
 -quality 95 -interlace JPEG
