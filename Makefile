@@ -15,10 +15,11 @@ margin-top=15mm \
 margin-bottom=20mm \
 papersize=a4 \
 fontsize=$(fontsize) \
-mainfont='STIX_Two_Text' \
-sansfont='PT_Sans' \
-monofont='PT_Mono' \
-mathfont='STIX_Two_Math'
+mainfont='DejaVu_Serif' \
+sansfont='DejaVu_Sans' \
+monofont='DejaVu_Sans_Mono' \
+monofontoptions=Scale=0.9 \
+mathfont='DejaVu_Math_TeX_Gyre'
 
 PANDOC_PDF_FLAGS = --pdf-engine=xelatex \
 $(subst _, ,$(addprefix -M ,$(PANDOC_PDF_STYLE)))
@@ -34,6 +35,9 @@ pdf-from-md: $(patsubst %.md,%.pdf,$(wildcard *.md))
 SHDOC = ~/bin/shdoc
 
 %.md: %.sh
+	$(SHDOC) $(SHDOC_FLAGS) $< > $@
+
+%.md: %
 	$(SHDOC) $(SHDOC_FLAGS) $< > $@
 
 pdf-from-sh: $(patsubst %.sh,%.pdf,$(wildcard *.sh))
@@ -178,10 +182,14 @@ multiviews: $(patsubst %.scad,%-multiview.png,$(wildcard *.scad))
 
 
 INKSCAPE = inkscape
-INKSCAPE_FLAGS = -z -d $(dpi)
+INKSCAPE_FLAGS = -z
+INKSCAPE_PNG_FLAGS = -d $(dpi)
 
 %.png: %.svg
 	$(INKSCAPE) $(INKSCAPE_FLAGS) $(INKSCAPE_PNG_FLAGS) -e '$(abspath $@)' '$(abspath $<)'
+
+%.svg: %.pdf
+	$(INKSCAPE) $(INKSCAPE_FLAGS) $(INKSCAPE_SVG_FLAGS) -l '$(abspath $@)' '$(abspath $<)'
 
 png-from-svg: $(patsubst %.svg,%.png,$(wildcard *.svg))
 
