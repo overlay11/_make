@@ -24,12 +24,18 @@ mathfont='DejaVu_Math_TeX_Gyre'
 PANDOC_PDF_FLAGS = --pdf-engine=xelatex \
 $(subst _, ,$(addprefix -M ,$(PANDOC_PDF_STYLE)))
 
+PANDOC_HTML_FLAGS = -s -M lang=$(lang)
+
 %.pdf: %.md
 	$(PANDOC) $(PANDOC_FLAGS) $(PANDOC_PDF_FLAGS) -o $@ $<
 
-pdf-from-md: $(patsubst %.md,%.pdf,$(wildcard *.md))
+%.html: %.md
+	$(PANDOC) $(PANDOC_FLAGS) $(PANDOC_HTML_FLAGS) -o $@ $<
 
-.PHONY: pdf-from-md
+pdf-from-md: $(patsubst %.md,%.pdf,$(wildcard *.md))
+html-from-md: $(patsubst %.md,%.html,$(wildcard *.md))
+
+.PHONY: pdf-from-md html-from-md
 
 
 SHDOC = ~/bin/shdoc
@@ -41,8 +47,9 @@ SHDOC = ~/bin/shdoc
 	$(SHDOC) $(SHDOC_FLAGS) $< > $@
 
 pdf-from-sh: $(patsubst %.sh,%.pdf,$(wildcard *.sh))
+html-from-sh: $(patsubst %.sh,%.html,$(wildcard *.sh))
 
-.PHONY: pdf-from-sh
+.PHONY: pdf-from-sh html-from-sh
 
 
 MAGICK = magick
